@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bahamas Countdown</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+      z-index: 2;
+      position: relative;
+    }
+
+    .goal-info, .remaining, .percent-display {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .percent-display {
+      font-weight: bold;
+      color: #ffeb3b;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .progress-bar {
+      width: 80%;
+      max-width: 600px;
+      height: 30px;
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 20px auto;
+      z-index: 2;
+      position: relative;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #ffeb3b, #ff9800);
+      width: 0;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .buttons button {
+      background-color: #ffca28;
+      border: none;
+      color: #004d40;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      z-index: 2;
+      position: relative;
+    }
+
+    .buttons button:hover {
+      transform: scale(1.05);
+      background-color: #fff59d;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>🏝️ Bahamas Countdown 🏝️</h1>
+    <div class="goal-info">Goal: $4,000,000</div>
+    <div class="goal-info" id="qualified">Qualified: $580,000</div>
+    <div class="percent-display" id="percentDisplay">0% of the way to Nassau</div>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="remaining" id="remaining"></div>
+
+    <div class="buttons">
+      <button onclick="qualify(50000)">+ $50k</button>
+      <button onclick="qualify(80000)">+ $80k</button>
+      <button onclick="qualify(250000)">+ $250k</button>
+      <button onclick="goBack()">Go Back</button>
+      <button onclick="resetProgress()">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    const goal = 4000000;
+    let qualified = parseInt(localStorage.getItem('qualifiedAmount')) || 580000;
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+
+    function updateDisplay() {
+      document.getElementById('qualified').innerText = `Qualified: $${qualified.toLocaleString()}`;
+      const percent = Math.min((qualified / goal) * 100, 100);
+      document.getElementById('progress').style.width = percent + '%';
+      document.getElementById('remaining').innerText = `Remaining: $${(goal - qualified).toLocaleString()}`;
+      document.getElementById('percentDisplay').innerText = `${percent.toFixed(1)}% of the way to Nassau`;
+      localStorage.setItem('qualifiedAmount', qualified);
+      localStorage.setItem('history', JSON.stringify(history));
+    }
+
+    function qualify(amount) {
+      qualified += amount;
+      history.push(amount);
+      updateDisplay();
+    }
+
+    function goBack() {
+      if(history.length > 0) {
+        const lastAmount = history.pop();
+        qualified -= lastAmount;
+        updateDisplay();
+      }
+    }
+
+    function resetProgress() {
+      qualified = 580000;
+      history = [];
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
